@@ -1,9 +1,9 @@
 === Emailing Subscription ===
-Contributors: seballero
-Tags: subscription, e-mailing, mailing, emailing, mail, users
+Contributors: dpik
+Tags: subscription, e-mailing, mailing, emailing, mail, users, email
 Requires at least: 3.4
-Tested up to: 3.4.2
-Stable tag: 1.2
+Tested up to: 4.0
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,13 +11,14 @@ A simple WordPress plugin for e-mailing subscription list.
 
 == Description ==
 
-This plugin creates a list of subscribers through a simple form that can be added anywhere in the template.
+This plugin is a fork of seballero's one: https://wordpress.org/plugins/email-suscripcion/
 
-Looking at your data in the WP Admin Area
+- Add a subscribe to email newsletter form using a widget
+- Users can easily subscribe or unsubscribe from the widget
+- Export the subscribers list in csv or xls format
+- Multisite compatible
 
-This plugin provides 1 administration page
-
-The mailing list in the admin page (http://you-site.com/wp-admin/admin.php?page=emailing_list) with option to export list in XLS format
+This plugin does not send any email, it just collects email addresses
 
 Requirements:  
 * WordPress 3.4 or later  
@@ -29,21 +30,14 @@ Requirements:
 == Installation ==
 
 1. Install and activate the plugin
-2. Add the form function in your template <code><?php if(function_exists('emailing_form')) { emailing_form();} ?></code>
+2. Add the widget to your pages
 4. [OPTIONAL] Apply custom styles
 5. YOU'RE DONE!
 
-== Frequently Asked Questions ==
-
-= I can add the form "subscription" Anywhere on the Template? =
-
-Yes, using the function <code><?php if(function_exists('emailing_form')) { emailing_form();} ?>.</code>
-
-== Screenshots ==
-
-1. The mailing list in the admin page.
-
 == Changelog ==
+
+= 1.4 =
+* Added features (Fork)
 
 = 1.3 =
 * Fixed pagination bug.

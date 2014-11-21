@@ -1,15 +1,13 @@
 <?php 
 /*
-Plugin Name: Emailing Subscription
-Plugin URI: http://www.seballero.com/blog/plugin-para-wordpress-e-mailing-subscription/
+Plugin Name: DYS Email Subscription
+Plugin URI: https://github.com/dpiquet/dys-email-subscription
 Description: A simple WordPress plugin for e-mailing subscription list.
 Author: Sebastian Orellana, Damien PIQUET
-Version: 1.3
-Author URI: http://www.seballero.com 
+Version: 1.4
 Text Domain: emailing-list
 Domain Path: /lang
 */
-
 
 /*
 TODO:
