@@ -1,10 +1,10 @@
 <?php 
 /*
-Plugin Name: DYS Emailing Subscription
-Plugin URI: https://github.com/dpiquet/dys-email-subscription
+Plugin Name: Emailing Subscription
+Plugin URI: http://www.seballero.com/blog/plugin-para-wordpress-e-mailing-subscription/
 Description: A simple WordPress plugin for e-mailing subscription list.
 Author: Sebastian Orellana, Damien PIQUET
-Version: 1.4
+Version: 1.3
 Author URI: http://www.seballero.com 
 Text Domain: emailing-list
 Domain Path: /lang
@@ -26,7 +26,7 @@ TODO:
 /*---------------------------------------------------
 register settings
 ----------------------------------------------------*/
-load_plugin_textdomain('emailing-list', false, basename( dirname( __FILE__ ) ) . '/lang' );
+load_plugin_textdomain( 'emailing-list', false, basename( dirname( __FILE__ ) ) . '/lang' );
     
 /**
   *  Create the widget
@@ -37,19 +37,19 @@ class DYSemailingList extends WP_Widget {
 		parent::__construct(
 			'dys_emailing_list_widget', 
 			__('Emailing List'),
-			array('description' => __('email collector widget'))
+			array( 'description' => __( 'email collector widget' ) )
 		);
 	}
 
-	public function widget($args, $instance) {
-		 emailing_form($instance['title']); 
+	public function widget( $args, $instance ) {
+		 emailing_form( $instance['title'] ); 
 	}
 
 	public function form( $instance ) {
-		if (isset($instance['title'])) {
+		if ( isset( $instance['title'] ) ) {
 			$titleValue = $instance['title'];
 		} else {
-			$titleValue = __('Subscribe to our News !');
+			$titleValue = __( 'Subscribe to our News !' );
 		}
 
 ?>
@@ -63,7 +63,7 @@ class DYSemailingList extends WP_Widget {
 <?php
 	}
 
-	public function update($new_instance, $old_instance) {
+	public function update( $new_instance, $old_instance ) {
 		$instance = array();
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 
@@ -77,21 +77,21 @@ add_action('widgets_init', function() { register_widget( 'DYSemailingList' ); })
 function theme_settings_init(){
     global $plugin_page;
 
-    if ($plugin_page == 'emailing_list') {
+    if ( $plugin_page == 'emailing_list' ) {
 
-	if (isset($_POST['export_subscribers'])) {
+	if ( isset( $_POST['export_subscribers'] ) ) {
 
 	    $today = date("Y-m-d");
             
             global $wpdb;
-            $result = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix."emailinglist GROUP BY email"); 
+            $result = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix."emailinglist GROUP BY email" ); 
 
-            if ( $_POST['export_subscribers'] == 'xls') {
+            if ( $_POST['export_subscribers'] == 'xls' ) {
 
-	        header("Content-Type: application/vnd.ms-excel");
-	        header("Expires: 0");
-	        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	        header("content-disposition: attachment;filename=emailing-$today.xls");
+	        header( "Content-Type: application/vnd.ms-excel" );
+	        header( "Expires: 0" );
+	        header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+	        header( "content-disposition: attachment;filename=emailing-$today.xls" );
 
 	        echo "<table>
 	        <thead>    
@@ -101,7 +101,7 @@ function theme_settings_init(){
 	         </tr>
 	        </thead>";
 
-	        foreach($result as $r) {
+	        foreach( $result as $r ) {
 		    echo "<tbody><tr>";
 		    echo "<td>".$r->email."</td>";
 		    echo "<td>".$r->time."</td>";
@@ -111,14 +111,14 @@ function theme_settings_init(){
 
 	        exit;
             }
-            elseif ( $_POST['export_subscribers'] == 'csv') {
+            elseif ( $_POST['export_subscribers'] == 'csv' ) {
                  
-	        header("Content-Type: text/csv");
-	        header("Expires: 0");
-	        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	        header("content-disposition: attachment;filename=emailing-$today.csv");
+	        header( "Content-Type: text/csv" );
+	        header( "Expires: 0" );
+	        header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+	        header( "content-disposition: attachment;filename=emailing-$today.csv" );
 
-		echo __('Email').';'.__('Registration date')."\n";
+		echo __( 'Email' ).';'.__( 'Registration date' )."\n";
 
 	        foreach($result as $r) {
 		    echo $r->email.';'.$r->time."\n";
@@ -139,7 +139,7 @@ function theme_settings_init(){
 add settings page to menu
 ----------------------------------------------------*/
 function add_settings_page() {
-    add_menu_page( __( 'Emailing List' .'' ), __( 'Emailing List' .'' ),'edit_posts',  'emailing_list', 'emailing');
+    add_menu_page( __( 'Emailing List' .'' ), __( 'Emailing List' .'' ), 'edit_posts',  'emailing_list', 'emailing');
 }
  
 /*---------------------------------------------------
@@ -171,53 +171,53 @@ function emailing_install() {
    add_option( "emailing_protect_form_with_js", true );
 }
 
-function emailing_install_data($emaling) {
+function emailing_install_data( $emaling ) {
    global $wpdb;
 
    $table_name = $wpdb->prefix . 'emailinglist';
-   return $wpdb->insert( $table_name, array( 'time' => current_time('mysql'), 'email' => $emaling ) );
+   return $wpdb->insert( $table_name, array( 'time' => current_time( 'mysql' ), 'email' => $emaling ) );
 }
 
-function remove_subscriber($email) {
+function remove_subscriber( $email ) {
     global $wpdb;
 
     $tableName = $wpdb->prefix . 'emailinglist';
-    return $wpdb->delete( $tableName, Array('email' => $email), Array('%s'));
+    return $wpdb->delete( $tableName, Array( 'email' => $email ), Array( '%s' ) );
 }
 
-function emailing_form($title) {
+function emailing_form( $title ) {
 ?>
 <div id="mailing_form">
   <span id="mailing_form_title"> <?php echo $title; ?> </span>
   <form name="emailing" action="" method="post"  class="clear">
     <input name="email" id="email" type="email" class="text" placeholder="<?php _e( 'Email Address', 'emailing-list' ) ?>"/>
     <input type="radio" name="subscriber_action" value="subscribe" checked>
-      <span id="mailing_form_subscribe_text"><?php _e('Subscribe'); ?><br></span>
+      <span id="mailing_form_subscribe_text"><?php _e( 'Subscribe' ); ?><br></span>
     <input type="radio" name="subscriber_action" value="unsubscribe">
-      <span id="mailing_form_unsubscribe_text"><?php _e('Unsubscribe'); ?></span>
+      <span id="mailing_form_unsubscribe_text"><?php _e( 'Unsubscribe' ); ?></span>
     <input type="submit" name="emailing-send" class="button" value="<?php _e( 'Subscribe', 'emailing-list' ) ?>"/>
   </form>
 </div>
 <?php
 
-    if (isset($_POST['emailing-send'])) {
-         if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-	     if ($_POST['subscriber_action'] == 'unsubscribe') {
-                 $st = remove_subscriber($_POST['email']);
-		 if ($st === false) {
-		     echo '<span class="mail-failure">'.__( 'An error occured, please try later or contact webmaster ').'</span>';
+    if ( isset( $_POST['emailing-send'] ) ) {
+         if ( filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL ) ) {
+	     if ( $_POST['subscriber_action'] == 'unsubscribe' ) {
+                 $st = remove_subscriber( $_POST['email'] );
+		 if ( $st === false ) {
+		     echo '<span class="mail-failure">'.__( 'An error occured, please try later or contact webmaster' ).'</span>';
 		 }
 		 else {
-		     echo '<span class="mail-success">'.__( 'Your email address was successfully deleted from our database').'</span>';
+		     echo '<span class="mail-success">'.__( 'Your email address was successfully deleted from our database' ).'</span>';
 		 }
              }
-             elseif ($_POST['subscriber_action'] == 'subscribe') {
-		$st = emailing_install_data($_POST['email']);
-		if ($st === false) {
-		    echo '<span class="mail-failure">'.__( 'An error occured, please try later or contact webmaster ').'</span>';
+             elseif ( $_POST['subscriber_action'] == 'subscribe' ) {
+		$st = emailing_install_data( $_POST['email'] );
+		if ( $st === false ) {
+		    echo '<span class="mail-failure">'.__( 'An error occured, please try later or contact webmaster' ).'</span>';
 		}
 		else {
-		    echo '<span class="mail-success">'.__( 'Your email address was subscribed successfully', 'emailing-list').'</span>';
+		    echo '<span class="mail-success">'.__( 'Your email address was subscribed successfully', 'emailing-list' ).'</span>';
 		}
 	     }
              
@@ -230,7 +230,6 @@ function emailing_form($title) {
     }
 }
 register_activation_hook( __FILE__, 'emailing_install' );
-
 
 class pagination {
     /**
@@ -467,17 +466,17 @@ Theme Emaling Suscripción
 ----------------------------------------------------*/
 function emailing() {
 
-    if (isset($_GET['action'])) {
+    if ( isset( $_GET['action'] ) ) {
         //someone wants to del user; check capabilities before proceeding
-	if($_GET['action'] == 'delete') {
-            if(isset($_GET['email'])) {
-                if(filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)) {
-                     $st = remove_subscriber($_GET['email']);
-		     if ($st === false) {
-		         echo '<span class="mail-failure">'.__( 'An error occured, please try later or contact webmaster ').'</span>';
+	if( $_GET['action'] == 'delete' ) {
+            if ( isset( $_GET['email'] ) ) {
+                if ( filter_var( $_GET['email'], FILTER_VALIDATE_EMAIL ) ) {
+                     $st = remove_subscriber( $_GET['email'] );
+		     if ( $st === false ) {
+		         echo '<span class="mail-failure">'.__( 'An error occured, please try later or contact webmaster' ).'</span>';
 		     }
 		     else {
-		         echo '<span class="mail-success">'.__( 'Email was successfully removed from database').'</span>';
+		         echo '<span class="mail-success">'.__( 'Email was successfully removed from database' ).'</span>';
 		     }
                 }
 		else {
@@ -494,12 +493,12 @@ function emailing() {
 
          <form method="post" id="download_form" action="">
             <input type="hidden" name="export_subscribers" value="xls">
-            <input type="submit" name="exportar_xls" class="button-primary" value="<?php _e('Export to Excel', 'emailing-list'); ?>" />
+            <input type="submit" name="exportar_xls" class="button-primary" value="<?php _e( 'Export to Excel', 'emailing-list' ); ?>" />
          </form>
 
          <form method="post" id="download_form" action="">
             <input type="hidden" name="export_subscribers" value="csv">
-            <input type="submit" name="export_cvs" class="button-primary" value="<?php _e('Export to CSV', 'emailing-list'); ?>" />
+            <input type="submit" name="export_cvs" class="button-primary" value="<?php _e( 'Export to CSV', 'emailing-list' ); ?>" />
          </form><br/>
 
 
@@ -513,7 +512,7 @@ function emailing() {
                 <option value="150">150</option>
                 <option value="999999"><?php _e('All', 'emailing-list'); ?></option>
             </select>
-            <input type="submit" class="button-primary" value="<?php _e('Show', 'emailing-list'); ?>" />
+            <input type="submit" class="button-primary" value="<?php _e( 'Show', 'emailing-list' ); ?>" />
          </form>
          
          <br/><br/>
@@ -522,36 +521,34 @@ function emailing() {
 global $wpdb;
 
 //$pagination_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(DISTINCT email) FROM ".$wpdb->prefix."emailinglist"));
-$pagination_count = $wpdb->get_var('SELECT COUNT(DISTINCT email) FROM '.$wpdb->prefix.'emailinglist');
+$pagination_count = $wpdb->get_var( 'SELECT COUNT(DISTINCT email) FROM '.$wpdb->prefix.'emailinglist' );
 if($pagination_count > 0) {
     //get current page
-    if (isset($_GET['p'])) {
+    if ( isset( $_GET['p'] ) ) {
     	$this_page = ($_GET['p'] > 0)? (int) $_GET['p'] : 1;
     } else { $this_page = 1; }
 
     //Records per page
-    if (isset($_GET['perpage'])) {
+    if ( isset( $_GET['perpage'] ) ) {
 	$per_page = (int) $_GET['perpage'];
     }
     else { $per_page = 20; }
 
     //Total Page
-    $total_page = ceil($pagination_count/$per_page);
+    $total_page = ceil( $pagination_count/$per_page );
  
     //initiate the pagination variable
     $pag = new pagination();
     //Set the pagination variable values
-    $pag->Items($pagination_count);
-    $pag->limit($per_page);
+    $pag->Items( $pagination_count );
+    $pag->limit( $per_page );
 
-    if($per_page != 20){
-        $pag->target("admin.php?page=emailing_list&perpage=".$per_page);
-    }else{
-        $pag->target("admin.php?page=emailing_list");
-    }
+    if( $per_page != 20 ) {
+        $pag->target( "admin.php?page=emailing_list&perpage=".$per_page );
+    } else { $pag->target( "admin.php?page=emailing_list" ); }
     
     
-    $pag->currentPage($this_page);
+    $pag->currentPage( $this_page );
  
     //Done with the pagination
     //Now get the entries
@@ -564,17 +561,17 @@ if($pagination_count > 0) {
     $list_end = ($this_page * $per_page) - 1;
  
     //Get the data from the database
-    $result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$wpdb->prefix."emailinglist GROUP BY email DESC LIMIT %d, %d", $list_start, $per_page));
+    $result = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "emailinglist GROUP BY email DESC LIMIT %d, %d", $list_start, $per_page ) );
 
-    if($result) {        
+    if( $result ) {        
 
-	printf(__('%d Subscribers'), $pagination_count);
+	printf( __( '%d Subscribers' ), $pagination_count );
         echo "<table class='widefat'>
         <thead>    
         <tr>
-        <th>".__( 'Email', 'emailing-list' )."</th>
-        <th>".__( 'Registration Date', 'emailing-list' )."</th>
-        <th>".__( 'Delete', 'emailing-list' )."</th>
+        <th>" . __( 'Email', 'emailing-list' ) . "</th>
+        <th>" . __( 'Registration Date', 'emailing-list' ) . "</th>
+        <th>" . __( 'Delete', 'emailing-list' ) . "</th>
         </tr>
         </thead>
         <tfoot>    
@@ -584,14 +581,14 @@ if($pagination_count > 0) {
         <th>".__( 'Delete', 'emailing-list' )."</th>
         </tr>
         </tfoot>";
-        foreach($result as $r)
+        foreach( $result as $r )
         {
                 echo '<tbody><tr>';
-                echo '<td>'.$r->email.'</td>';
-                echo '<td>'.$r->time.'</td>';
+                echo '<td>' . $r->email . '</td>';
+                echo '<td>' . $r->time . '</td>';
                 echo '<td><form action=""><input type="hidden" name="page" value="emailing_list" />';
-		echo '<input type="hidden" name="email" value="'.$r->email.'">';
-		echo '<input type="hidden" name="p" value="'.$this_page.'">';
+		echo '<input type="hidden" name="email" value="' . $r->email . '">';
+		echo '<input type="hidden" name="p" value="' . $this_page . '">';
 		echo '<input type="hidden" name="action" value="delete">';
 		echo '<input type="Submit" value="X">';
 		echo '</td>';
@@ -610,8 +607,8 @@ if($pagination_count > 0) {
 
 <?php
         }else{
-            echo '<h3>'.__('This Information is empty', 'emailing-list').'</h3>';
+            echo '<h3>' . __( 'This Information is empty', 'emailing-list' ) . '</h3>';
         }
     }
-    else { echo '<h3>'.__('No subscribers so far', 'emailing-list').'</h3>'; }
+    else { echo '<h3>' . __( 'No subscribers so far', 'emailing-list' ) . '</h3>'; }
 }?>
