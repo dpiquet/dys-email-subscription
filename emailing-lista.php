@@ -44,7 +44,7 @@ class DYSemailingList extends WP_Widget {
 		$title = '';
 		if( isset( $instance['title'] ) ) { $title = $instance['title']; }
 		
-		emailing_form( $instance['title'] ); 
+		emailing_form( $title ); 
 	}
 
 	public function form( $instance ) {
