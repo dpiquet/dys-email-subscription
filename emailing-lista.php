@@ -605,14 +605,14 @@ if($pagination_count > 0) {
         <thead>    
         <tr>
         <th>" . __( 'Email', 'dys-email-subscription' ) . "</th>
-        <th>" . __( 'Registration Date', 'dys-email-subscription' ) . "</th>
+        <th>" . __( 'Registration date', 'dys-email-subscription' ) . "</th>
         <th>" . __( 'Actions', 'dys-email-subscription' ) . "</th>
         </tr>
         </thead>
         <tfoot>    
         <tr>
         <th>" . __( 'Email', 'dys-email-subscription' ) . "</th>
-        <th>" . __( 'Registration Date', 'dys-email-subscription' ) . "</th>
+        <th>" . __( 'Registration date', 'dys-email-subscription' ) . "</th>
         <th>" . __( 'Actions', 'dys-email-subscription' ) . "</th>
         </tr>
         </tfoot>";
@@ -634,7 +634,7 @@ if($pagination_count > 0) {
 
         <div class="tablenav">
             <div class="tablenav-pages">
-                <span class="displaying-num"><?php echo $pagination_count; ?> items</span>
+                <span class="displaying-num"><?php echo $pagination_count . ' ' . __( 'Items' ); ?> </span>
                 <?php $pag->show(); ?>
             </div>
         </div> 
