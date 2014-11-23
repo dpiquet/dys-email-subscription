@@ -6,7 +6,7 @@ Description: A simple WordPress plugin for e-mailing subscription list.
 Author: Sebastian Orellana, Damien PIQUET
 Author URI: https://github.com/dpiquet/
 Version: 1.4
-Text Domain: emailing-list
+Text Domain: dys-email-subscription
 Domain Path: /lang
 */
 
