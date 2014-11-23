@@ -18,6 +18,7 @@ TODO:
 	save registration as unix epoch so we can print it the language we want
 	check security (database injection)
 	protect form with JS ?
+	remove form when user has subscribe
 
 */
 
@@ -43,8 +44,9 @@ class DYSemailingList extends WP_Widget {
 	public function widget( $args, $instance ) {
 		$title = '';
 		if( isset( $instance['title'] ) ) { $title = $instance['title']; }
+		else { $title = __( 'Subscribe to our News !', 'dys-email-subscription' ); }
 		
-		emailing_form( $title ); 
+		emailing_form( $title );
 	}
 
 	public function form( $instance ) {
@@ -141,7 +143,7 @@ function theme_settings_init() {
 add settings page to menu
 ----------------------------------------------------*/
 function add_settings_page() {
-    add_menu_page( __( 'Emailing List', 'dys-email-subscription' ), __( 'Emailing List', 'dys-email-subscription' ), 'edit_posts',  'emailing_list', 'emailing');
+    add_menu_page( __( 'Subscribers', 'dys-email-subscription' ), __( 'Subscribers', 'dys-email-subscription' ), 'edit_posts',  'emailing_list', 'emailing');
 }
  
 /*---------------------------------------------------
@@ -189,17 +191,17 @@ function remove_subscriber( $email ) {
 
 function emailing_form( $title ) {
 ?>
-<div id="mailing_form">
-  <span id="mailing_form_title"> <?php echo $title; ?> </span>
+<aside id="dys-email-subscription" class="widget widget_dys-email-subscription"">
+  <h2 class="widget-title"> <?php echo $title; ?> </h2>
   <form name="emailing" action="" method="post"  class="clear">
     <input name="email" id="email" type="email" class="text" placeholder="<?php _e( 'Email Address', 'dys-email-subscription' ) ?>"/>
     <input type="radio" name="subscriber_action" value="subscribe" checked>
       <span id="mailing_form_subscribe_text"><?php _e( 'Subscribe', 'dys-email-subscription' ); ?><br></span>
     <input type="radio" name="subscriber_action" value="unsubscribe">
       <span id="mailing_form_unsubscribe_text"><?php _e( 'Unsubscribe', 'dys-email-subscription' ); ?></span>
+      <br>
     <input type="submit" name="emailing-send" class="button" value="<?php _e( 'Subscribe', 'dys-email-subscription' ) ?>"/>
   </form>
-</div>
 <?php
 
     if ( isset( $_POST['emailing-send'] ) ) {
@@ -240,6 +242,9 @@ function emailing_form( $title ) {
     else {
         return false;
     }
+?>
+</aside>
+<?php
 }
 register_activation_hook( __FILE__, 'emailing_install' );
 
@@ -507,7 +512,7 @@ function emailing() {
 ?>
          <div class="wrap">
          <div id="icon-users" class="icon32"></div>
-         <h2><?php _e( 'E-mailing List', 'emailing-list' ) ?></h2><br/><br/>
+         <h2><?php _e( 'Subscribers', 'dys-email-subscription' ) ?></h2><br/><br/>
 
          <form method="post" id="download_form" action="">
             <input type="hidden" name="export_subscribers" value="xls">
@@ -577,32 +582,42 @@ if($pagination_count > 0) {
     if($list_start < 0) //list start cannot be negative
         $list_start = 0;
     $list_end = ($this_page * $per_page) - 1;
+
+    $search = '';
  
     //Get the data from the database
-    $result = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "emailinglist GROUP BY email DESC LIMIT %d, %d", $list_start, $per_page ) );
+    if ( isset( $_GET['search'] ) && $_GET['search'] != '' ) {
+	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'emailinglist WHERE email LIKE "%s" GROUP BY email DESC LIMIT %d, %d', '%' . $_GET['search'] . '%', $list_start, $per_page ) );
+
+	$search = $_GET['search'];
+    } else {
+	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'emailinglist GROUP BY email DESC LIMIT %d, %d', $list_start, $per_page ) );
+    }
 
     if( $result ) {        
-
-	printf( __( '%d Subscribers', 'dys-email-subscription' ), $pagination_count );
+	echo '<form action=""><input type="hidden" name="page" value="emailing_list" />';
+	echo '<input type="hidden" name="p" value="' . $this_page . '">';
+	echo '<input type="text" name="search" placeholder="' . __( 'Your research' ) . '" value="' . $search . '">';
+	echo '<input type="Submit" value="' . __( 'Search' ) . '">';
+	echo '</form>';
 
         echo "<table class='widefat'>
         <thead>    
         <tr>
         <th>" . __( 'Email', 'dys-email-subscription' ) . "</th>
         <th>" . __( 'Registration Date', 'dys-email-subscription' ) . "</th>
-        <th>" . __( 'Delete', 'dys-email-subscription' ) . "</th>
+        <th>" . __( 'Actions', 'dys-email-subscription' ) . "</th>
         </tr>
         </thead>
         <tfoot>    
         <tr>
         <th>" . __( 'Email', 'dys-email-subscription' ) . "</th>
         <th>" . __( 'Registration Date', 'dys-email-subscription' ) . "</th>
-        <th>" . __( 'Delete', 'dys-email-subscription' ) . "</th>
+        <th>" . __( 'Actions', 'dys-email-subscription' ) . "</th>
         </tr>
         </tfoot>";
 
-        foreach( $result as $r )
-        {
+        foreach( $result as $r ) {
                 echo '<tbody><tr>';
                 echo '<td>' . $r->email . '</td>';
                 echo '<td>' . $r->time . '</td>';
@@ -610,7 +625,7 @@ if($pagination_count > 0) {
 		echo '<input type="hidden" name="email" value="' . $r->email . '">';
 		echo '<input type="hidden" name="p" value="' . $this_page . '">';
 		echo '<input type="hidden" name="action" value="delete">';
-		echo '<input type="Submit" value="X">';
+		echo '<input type="Submit" value="' . __('Delete') . '">';
 		echo '</td>';
                 echo "</tr></tbody>";
         }
@@ -626,7 +641,7 @@ if($pagination_count > 0) {
         </div> 
 
 <?php
-        }else{
+        } else {
             echo '<h3>' . __( 'This Information is empty', 'dys-email-subscription' ) . '</h3>';
         }
     }
