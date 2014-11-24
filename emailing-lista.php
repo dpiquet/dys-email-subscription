@@ -587,9 +587,11 @@ if($pagination_count > 0) {
  
     //Get the data from the database
     if ( isset( $_GET['search'] ) && $_GET['search'] != '' ) {
-	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'emailinglist WHERE email LIKE "%s" GROUP BY email DESC LIMIT %d, %d', '%' . $_GET['search'] . '%', $list_start, $per_page ) );
-
 	$search = $_GET['search'];
+	$search = sanitize_email( $search );
+
+	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'emailinglist WHERE email LIKE "%s" GROUP BY email DESC LIMIT %d, %d', '%' . $search . '%', $list_start, $per_page ) );
+
     } else {
 	$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'emailinglist GROUP BY email DESC LIMIT %d, %d', $list_start, $per_page ) );
     }
