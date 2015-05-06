@@ -1,0 +1,43 @@
+/*
+ * CSS effects for cube animation
+ * 
+ * @author Damien PIQUET <piqudam@gmail.com>
+ */
+
+@import "compass/css3/transform";
+@import "compass/css3/transition";
+
+$cubeHeight: 140px;
+
+#dys-email-subscription-cube {
+	position: relative;
+	height: $cubeHeight;
+}
+
+#dys-email-subscription-cube > div {
+	width: 100%;
+	height: $cubeHeight;
+	padding: 5px;
+}
+
+.face-error {
+	position: absolute;
+	display: none;
+}
+
+.face-error > p {
+	color: red;
+}
+
+.face-success {
+	position: absolute;
+	display: none;
+}
+
+.face-success > p {
+	color: green;
+}
+
+.origin-face {
+	position: absolute;
+}

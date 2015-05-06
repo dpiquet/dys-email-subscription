@@ -1,0 +1,60 @@
+/*
+ * CSS effects for cube animation
+ * 
+ * @author Damien PIQUET <piqudam@gmail.com>
+ */
+
+@import "compass/css3/transform";
+@import "compass/css3/transition";
+
+$cubeHeight: 140px;
+
+#dys-email-subscription-cube {
+	position: relative;
+	@include transition-duration (1s);
+	@include transition-timing-function (ease);
+	@include transform-style (preserve-3d);
+	height: $cubeHeight;
+}
+
+#dys-email-subscription-cube > div {
+	width: 100%;
+	@include backface-visibility (hidden);
+	height: $cubeHeight;
+	padding: 5px;
+}
+
+.rotate-left {
+	@include transform (rotateY(90deg) translateZ(0));
+}
+
+.rotate-right {
+	@include transform (rotateY(-90deg) translateZ(0));
+}
+
+.face-error {
+	position: absolute;
+	@include transform (rotateY(-90deg) translateZ(124px));
+	/*background-color: #FFF9F9;*/
+	background-color: lighten(red, 49%);
+}
+
+.face-error > p {
+	color: red;
+}
+
+.face-success {
+	position: absolute;
+	@include transform (rotateY(90deg) translateZ(124px));
+	/*background-color: #F9FFF9;*/
+	background-color: lighten(green, 74%);
+}
+
+.face-success > p {
+	color: green;
+}
+
+.origin-face {
+	position: absolute;
+	@include transform (rotateX(0deg) translateZ(124px));
+}

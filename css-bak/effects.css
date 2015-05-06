@@ -1,0 +1,42 @@
+/*
+ * CSS effects for cube animation
+ *
+ */
+
+#dys-email-subscription-cube {
+	position: relative;
+	transition:all 1s ease;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	height: 140px;
+}
+
+#dys-email-subscription-cube > div {
+	width: 100%;
+	backface-visibility: hidden;
+}
+
+.face-error {
+	position: absolute;
+	transform: rotateY(-90deg) translateZ(124px);
+	-webkit-transform: rotateY(-90deg) translateZ(124px);
+}
+
+.face-error > p {
+	color: red;
+}
+
+.face-success {
+	position: absolute;
+	transform: rotateY(90deg) translateZ(124px);
+	-webkit-transform: rotateY(90deg) translateZ(124px);
+}
+
+.face-success > p {
+	color: green;
+}
+
+.origin-face {
+	position: absolute;
+	transform: rotateX(0deg) translateZ(124px);
+}

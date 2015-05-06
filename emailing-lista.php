@@ -3,7 +3,7 @@
 Plugin Name: DYS Email Subscription
 Plugin URI: https://github.com/dpiquet/dys-email-subscription
 Description: A simple WordPress plugin for e-mailing subscription list.
-Author: Sebastian Orellana, Damien PIQUET
+Author: Damien PIQUET
 Author URI: https://github.com/dpiquet/
 Version: 1.5
 Text Domain: dys-email-subscription
@@ -39,6 +39,39 @@ class DYSemailingList extends WP_Widget {
 			__( 'Emailing List', 'dys-email-subscription' ),
 			array( 'description' => __( 'email collector widget', 'dys-email-subscription' ) )
 		);
+
+		if ( ! is_admin() ) {
+
+			$useAjax = get_option('dys-email-subscription-useajax');
+
+			if($useAjax) {
+
+				$effect = get_option('dys-email-subscription-effect');
+
+				wp_enqueue_script(
+					'dys-email-ajax-handler',
+					plugins_url( 'js/ajax-query.js', __FILE__),
+					Array ('jquery')
+				);
+
+				/* use fade effect by default */
+				if(! in_array($effect, Array('cube', 'fade')) ){
+					$effect = 'fade';
+				}
+
+				wp_enqueue_script(
+					'dys-email-cube-effects',
+					plugins_url( 'js/'.$effect.'.js', __FILE__),
+					Array ('jquery')
+				);
+
+				wp_enqueue_style(
+					'dys-email-subscription-effects',
+					plugins_url( 'css/'.$effect.'.css', __FILE__ )
+				);
+
+			}
+		}
 	}
 
 	public function widget( $args, $instance ) {
@@ -172,7 +205,8 @@ function emailing_install() {
    dbDelta( $sql );
  
    add_option( "emailing_db_version", $emailing_db_version );
-   add_option( "emailing_protect_form_with_js", true );
+   add_option( 'dys-email-subscription-useajax', true );
+   add_option( 'dys-email-subscription-effect', 'fade' );
 }
 
 function emailing_install_data( $emaling ) {
@@ -193,17 +227,25 @@ function emailing_form( $title ) {
 ?>
 <aside id="dys-email-subscription" class="widget widget_dys-email-subscription">
   <h3 class="widget-title"> <?php echo $title; ?> </h3>
-  <form name="emailing" method="post"  class="dys_email">
-    <input name="email" id="email" type="email" class="text" placeholder="<?php _e( 'Email Address', 'dys-email-subscription' ) ?>"/>
-    <br>
-    <input type="radio" name="subscriber_action" value="subscribe" checked>
-      <span id="mailing_form_subscribe_text"><?php _e( 'Subscribe', 'dys-email-subscription' ); ?></span>
-      <br>
-    <input type="radio" name="subscriber_action" value="unsubscribe">
-      <span id="mailing_form_unsubscribe_text"><?php _e( 'Unsubscribe', 'dys-email-subscription' ); ?></span>
-      <br>
-    <input type="submit" name="emailing-send" class="button" value="<?php _e( 'Subscribe', 'dys-email-subscription' ) ?>"/>
-  </form>
+  <div id="dys-email-subscription-cube">
+    <div class="origin-face">
+	  <form name="emailing" method="post" class="dys_email" id="dys-email-subscription-form">
+		<input name="email" id="email" type="email" class="text" placeholder="<?php _e( 'Email Address', 'dys-email-subscription' ) ?>"/>
+		<br>
+		<input type="radio" name="subscriber_action" value="subscribe" checked>
+		  <span id="mailing_form_subscribe_text"><?php _e( 'Subscribe', 'dys-email-subscription' ); ?></span>
+		  <br>
+		<input type="radio" name="subscriber_action" value="unsubscribe">
+		  <span id="mailing_form_unsubscribe_text"><?php _e( 'Unsubscribe', 'dys-email-subscription' ); ?></span>
+		  <br>
+		<input type="submit" id="dys-email-subscription-save" name="emailing-send" class="button" value="<?php _e( 'Subscribe', 'dys-email-subscription' ) ?>"/>
+	  </form>
+    </div>
+    <div class="face-success">
+    </div>
+	<div class="face-error">
+    </div>
+  </div>
 <?php
 
     if ( isset( $_POST['emailing-send'] ) ) {
@@ -650,5 +692,53 @@ if($pagination_count > 0) {
     }
     else { echo '<h3>' . __( 'No subscribers so far', 'dys-email-subscription' ) . '</h3>'; }
 }
+
+/*
+ * Ajax function to process user FO request
+ *
+ */
+function DYS_process_ajax_call() {
+	$msg = Array();
+
+	if ( filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL ) ) {
+		if ( $_POST['subscriber_action'] == 'unsubscribe' ) {
+			$st = remove_subscriber( $_POST['email'] );
+			if ( $st === false ) {
+				$msg['code'] = 'error';
+				$msg['msg'] = __( 'An error occured, please try later or contact webmaster', 'dys-email-subscription' );
+			}
+			else {
+				$msg['code'] = 'success';
+				$msg['msg'] = __( 'Your email address was successfully deleted from our database', 'dys-email-subscription' );
+			}
+		}
+		elseif ( $_POST['subscriber_action'] == 'subscribe' ) {
+			$st = emailing_install_data( $_POST['email'] );
+			if ( $st === false ) {
+				$msg['code'] = 'error';
+				$msg['msg'] = __( 'An error occured, please try later or contact webmaster', 'dys-email-subscription' );
+			}
+			else {
+				$msg['code'] = 'success';
+				$msg['msg'] = __( 'Your email address was subscribed successfully', 'dys-email-subscription' );
+			}
+		}
+		else {
+			$msg['code'] = 'error';
+			$msg['msg'] = __('Invalid action !', 'dys-email-subscription');
+		}
+	}
+	else {
+		$msg['code'] = 'error';
+		$msg['msg'] = __( 'Email address seems invalid.', 'dys-email-subscription' );
+	} 
+
+	echo json_encode($msg);
+	exit();
+}
+
+
+add_action( 'wp_ajax_dys_email_userquery', 'DYS_process_ajax_call' );
+add_action( 'wp_ajax_nopriv_dys_email_userquery', 'DYS_process_ajax_call' );
 
 ?>

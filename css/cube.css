@@ -1,0 +1,97 @@
+/*
+ * CSS effects for cube animation
+ * 
+ * @author Damien PIQUET <piqudam@gmail.com>
+ */
+/* line 12, ../sass/cube.scss */
+#dys-email-subscription-cube {
+  position: relative;
+  -webkit-transition-duration: 1s;
+  -moz-transition-duration: 1s;
+  -o-transition-duration: 1s;
+  transition-duration: 1s;
+  -webkit-transition-timing-function: ease;
+  -moz-transition-timing-function: ease;
+  -o-transition-timing-function: ease;
+  transition-timing-function: ease;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
+  -o-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  height: 140px;
+}
+
+/* line 20, ../sass/cube.scss */
+#dys-email-subscription-cube > div {
+  width: 100%;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+  height: 140px;
+  padding: 5px;
+}
+
+/* line 27, ../sass/cube.scss */
+.rotate-left {
+  -webkit-transform: rotateY(90deg) translateZ(0);
+  -moz-transform: rotateY(90deg) translateZ(0);
+  -ms-transform: rotateY(90deg) translateZ(0);
+  -o-transform: rotateY(90deg) translateZ(0);
+  transform: rotateY(90deg) translateZ(0);
+}
+
+/* line 31, ../sass/cube.scss */
+.rotate-right {
+  -webkit-transform: rotateY(-90deg) translateZ(0);
+  -moz-transform: rotateY(-90deg) translateZ(0);
+  -ms-transform: rotateY(-90deg) translateZ(0);
+  -o-transform: rotateY(-90deg) translateZ(0);
+  transform: rotateY(-90deg) translateZ(0);
+}
+
+/* line 35, ../sass/cube.scss */
+.face-error {
+  position: absolute;
+  -webkit-transform: rotateY(-90deg) translateZ(124px);
+  -moz-transform: rotateY(-90deg) translateZ(124px);
+  -ms-transform: rotateY(-90deg) translateZ(124px);
+  -o-transform: rotateY(-90deg) translateZ(124px);
+  transform: rotateY(-90deg) translateZ(124px);
+  /*background-color: #FFF9F9;*/
+  background-color: #fffafa;
+}
+
+/* line 42, ../sass/cube.scss */
+.face-error > p {
+  color: red;
+}
+
+/* line 46, ../sass/cube.scss */
+.face-success {
+  position: absolute;
+  -webkit-transform: rotateY(90deg) translateZ(124px);
+  -moz-transform: rotateY(90deg) translateZ(124px);
+  -ms-transform: rotateY(90deg) translateZ(124px);
+  -o-transform: rotateY(90deg) translateZ(124px);
+  transform: rotateY(90deg) translateZ(124px);
+  /*background-color: #F9FFF9;*/
+  background-color: #fafffa;
+}
+
+/* line 53, ../sass/cube.scss */
+.face-success > p {
+  color: green;
+}
+
+/* line 57, ../sass/cube.scss */
+.origin-face {
+  position: absolute;
+  -webkit-transform: rotateX(0deg) translateZ(124px);
+  -moz-transform: rotateX(0deg) translateZ(124px);
+  -ms-transform: rotateX(0deg) translateZ(124px);
+  -o-transform: rotateX(0deg) translateZ(124px);
+  transform: rotateX(0deg) translateZ(124px);
+}
